@@ -5,14 +5,21 @@ var zoomed = false;
 
 var programmaticMove = false;
 
+var search = false;
+
 $(document).ready(() => {
     $("#map").height(window.innerHeight);
+    $("#search-area").height(window.innerHeight);
+    $("#search-area").hide();
+
+    $("#quickSearch").css("marginTop", $("#search-div").height() + 15 + 25); // 15 + 25 = paddingBottom + paddingTop of search-div
 
     map = L.map("map", {
         zoomControl: false
     }).setView([37, -122], 5);
 
     createLocateButton();
+    setupAnimateCSS();
 
     map.addControl(L.control.zoom({position: "bottomright"}));
 
@@ -46,10 +53,26 @@ $(document).ready(() => {
     });
 
     $("#search-box").focus(() => {
-        console.log("adding");
-        $("#search-box").animate({width: "83%"}, 800);
-        $("#back-button").animate({ 'height': '220px', 'width': '200px' }, 800);
+        if(!search) {
+            search = true;
+            $("#back-button").css("left", "0%").animate({"left": "5%"}, 200);
+            $("#search-box").animate({width: "74%"}, 400);
+            $("#search-area").show("blind", {direction: "down"}, 400);
+            $("#search-div").css("background-color", "#F6F6F6");
+        }
     });
+
+    $("#back-button").click(() => {
+        if(search) {
+            search = false;
+            $("#back-button").animate({"left": "0%"}, 100, () => {
+                $("#back-button").css("left", "-15%");
+            });
+            $("#search-box").animate({width: "90%"}, 400);
+            $("#search-area").hide("blind", {direction: "down"}, 400);
+            $("#search-div").css("background-color", "transparent");
+        }
+    })
 });
 
 function showLocation(location) {
@@ -104,7 +127,17 @@ function createLocateButton() {
     L.control.locate = (opts) => new L.Control.Locate(opts);
 }
 
-
+function setupAnimateCSS() {
+    $.fn.extend({
+        animateCss: function (animationName) {
+            var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+            this.addClass('animated ' + animationName).one(animationEnd, function() {
+                $(this).removeClass('animated ' + animationName);
+            });
+            return this;
+        }
+    });
+}
 
 
 
