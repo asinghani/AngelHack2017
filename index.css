@@ -1,0 +1,11 @@
+.form-control.round {
+    border-radius: 200px;
+}
+
+.form-control.noshadow {
+    outline: none;
+    border: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+}
