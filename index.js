@@ -16,10 +16,8 @@ $(document).ready(() => {
 
     map.addControl(L.control.zoom({position: "bottomright"}));
 
-    L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-        maxZoom: 18,
-        id: "mapbox.streets",
-        accessToken: "pk.eyJ1IjoiYXNpbmdoYW5pIiwiYSI6ImNpaDV0cXpzajAzcmN0Z20yNzZ2OGtpM3cifQ.RZcxkKjXBBwsXP-BrUjaiQ"
+    L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiYXNpbmdoYW5pIiwiYSI6ImNpaDV0cXpzajAzcmN0Z20yNzZ2OGtpM3cifQ.RZcxkKjXBBwsXP-BrUjaiQ", {
+        maxZoom: 18
     }).addTo(map);
 
     if (navigator.geolocation) {
@@ -32,7 +30,7 @@ $(document).ready(() => {
         navigator.geolocation.watchPosition(showLocation, console.error, options);
     }
 
-    //L.control.watermark({position: "bottomleft"}).addTo(map);
+    L.control.locate({position: "bottomleft"}).addTo(map);
 
 
     map.on("zoomstart", () => {
@@ -46,6 +44,12 @@ $(document).ready(() => {
             zoomed = false;
         }
     });
+
+    $("#search-box").focus(() => {
+        console.log("adding");
+        $("#search-box").animate({width: "83%"}, 800);
+        $("#back-button").animate({ 'height': '220px', 'width': '200px' }, 800);
+    });
 });
 
 function showLocation(location) {
@@ -54,7 +58,7 @@ function showLocation(location) {
     if(!userMarker) {
         userMarker = L.marker(coords).addTo(map);
         programmaticMove = true;
-        map.setZoom(17);
+        map.setZoom(16);
         map.panTo(coords);
         programmaticMove = false;
         zoomed = true;
@@ -62,22 +66,38 @@ function showLocation(location) {
         userMarker.setLatLng(coords);
         if(zoomed) {
             programmaticMove = true;
-            map.panTo(coords);
+            map.flyTo(coords);
             programmaticMove = false;
         }
     }
 }
 
-
 function createLocateButton() {
     L.Control.Locate = L.Control.extend({
         onAdd: function(map) {
-            var img = L.DomUtil.create('img');
+            var container = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-control-custom");
 
-            img.src = '../../docs/images/logo.png';
-            img.style.width = '200px';
+            container.style.backgroundColor = "white";
+            container.style.width = "40px";
+            container.style.height = "40px";
+            container.style.marginBottom = "20px";
 
-            return img;
+            // TODO Make locate & zoom buttons rounded
+
+            container.style.backgroundImage = "url(my_location.svg)";
+            container.style.backgroundSize = "25px 25px";
+            container.style.backgroundRepeat = "no-repeat";
+            container.style.backgroundPosition = "center center";
+
+            container.onclick = function() {
+                zoomed = true;
+
+                programmaticMove = true;
+                map.flyTo(userMarker.getLatLng(), 16);
+                programmaticMove = false;
+            };
+
+            return container;
         }
     });
 
