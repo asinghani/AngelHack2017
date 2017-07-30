@@ -121,7 +121,7 @@ $(document).ready(() => {
         reports = undefined;
         locationReports = undefined;
 
-        $.post("/api/venues/search", {lat: mainCoords.lat, long: mainCoords.lng, searchstring: search}, ((reqNumber, body) => {
+        $.post("/api/venues/search", {lat: mainCoords[0], long: mainCoords[1], searchstring: search}, ((reqNumber, body) => {
             if(reqNumber === requestNumber) { // Check if latest request
                 venues = body.venues;
                 if(venues && reports && locationReports) updateSearchResults();
