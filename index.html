@@ -47,9 +47,32 @@
             var appkey = 'bd9d1bB9413bD7bf1CbCFf332bAE55A0';
 
             var client = new RTM(endpoint, appkey);
+            var channel;
 
             client.on('enter-connected', function () {
                 console.log('Connected to Satori RTM!');
+                channel = client.subscribe('reports', RTM.SubscriptionMode.SIMPLE);
+                channel.on('enter-subscribed', function () {
+                    console.log('Subscribed to: ' + channel.subscriptionId);
+                });
+
+                channel.on('leave-subscribed', function () {
+                    console.log('Unsubscribed from: ' + channel.subscriptionId);
+                });
+
+                channel.on('rtm/subscription/data', function (pdu) {
+                    gotData(pdu.body.messages);
+                });
+
+                channel.on('rtm/subscribe/error', function (pdu) {
+                    console.log('Failed to subscribe. RTM replied with the error ' +
+                        pdu.body.error + ': ' + pdu.body.reason);
+                });
+
+                channel.on('rtm/subscription/error', function (pdu) {
+                    console.log('Subscription failed. RTM sent the unsolicited error ' +
+                        pdu.body.error + ': ' + pdu.body.reason);
+                });
             });
 
             client.on('error', function (error) {

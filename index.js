@@ -25,6 +25,8 @@ var venues = undefined;
 var reports = undefined;
 var locationReports = undefined;
 
+var liveData = [];
+
 $(document).ready(() => {
     $("#map").height(window.innerHeight);
     $("#search-area").height(window.innerHeight).hide();
@@ -464,4 +466,9 @@ function startSpinner() {
 
 function stopSpinner() {
     if(spinner) spinner.stop();
+}
+
+function gotData(data) {
+    liveData.push(data);
+    console.log(data);
 }
