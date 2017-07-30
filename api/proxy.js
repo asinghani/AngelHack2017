@@ -1,6 +1,6 @@
 var proxy = require("redbird")({ssl: {port: 443}});
 
-proxy.register("find-safe.space", "http://localhost:3000", {
+require("redbird").register("find-safe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
@@ -10,7 +10,7 @@ proxy.register("find-safe.space", "http://localhost:3000", {
     }
 });
 
-proxy.register("www.find-safe.space", "http://localhost:3000", {
+require("redbird").register("www.find-safe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
@@ -20,7 +20,7 @@ proxy.register("www.find-safe.space", "http://localhost:3000", {
     }
 });
 
-proxy.register("gotosafe.space", "http://localhost:3000", {
+require("redbird").register("gotosafe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
@@ -30,7 +30,7 @@ proxy.register("gotosafe.space", "http://localhost:3000", {
     }
 });
 
-proxy.register("www.gotosafe.space", "http://localhost:3000", {
+require("redbird").register("www.gotosafe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
