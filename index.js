@@ -4,6 +4,7 @@
 
 
 var userMarker;
+var userMarker2;
 var map;
 
 var zoomed = false;
@@ -239,7 +240,8 @@ function showLocation(location) {
     console.log(location.coords);
     let coords = [location.coords.latitude, location.coords.longitude];
     if(!userMarker) {
-        userMarker = L.layerGroup([L.circleMarker(coords, {fillOpacity: 1.0, radius: 5}), L.circleMarker(coords, {fillOpacity: 0.2, radius: 45, opacity: 0})]).addTo(map);
+        userMarker = L.circleMarker(coords, {fillOpacity: 1.0, radius: 5}).addTo(map);
+        userMarker2 = L.circleMarker(coords, {fillOpacity: 0.2, radius: 45, opacity: 0}).addTo(map);
 
         // TODO ADD PUBSUB
         // TODO Loopback
@@ -254,6 +256,7 @@ function showLocation(location) {
         $("#map").removeClass("loading");
     } else {
         userMarker.setLatLng(coords);
+        userMarker2.setLatLng(coords);
         if(zoomed) {
             programmaticMove = true;
             map.flyTo(coords);
