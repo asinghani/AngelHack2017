@@ -10,7 +10,7 @@
     "start": "node .",
     "test": "node tests.js",
     "loadtest": "curl http://127.0.0.1:3000 && ab -n 1000 -c 100 http://127.0.0.1:3000/ || echo -e \"\\033[0;31mPlease start the server first\\033[0m\"",
-    "deploy": "git commit -am \"Deploying\" || true; git push; ssh -i ../project.pem -t ec2-user@54.88.199.117 \"cd AngelHack2017 && ./deploy.sh\""
+    "deploy": "git commit -am \"Deploying\" || true; git push; ssh -i ../project.pem -t ec2-user@54.88.199.117 \"cd AngelHack2017 && ./deploy.sh --daemon\""
   },
   "dependencies": {
     "compression": "^1.0.3",
