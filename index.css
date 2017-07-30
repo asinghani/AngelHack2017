@@ -95,3 +95,16 @@
 .loading > div {
     background: url("Magnify.gif") no-repeat center center;
 }
+.carousel-inner > .item > img, .carousel-inner > .item > a > img {
+    width: 100%;
+}
+
+.bar-white-nav:after {
+    background-color:white;
+    position:absolute;
+    content:"";
+    left:0;
+    right:0;
+    height:15px;
+    top:40px;
+}

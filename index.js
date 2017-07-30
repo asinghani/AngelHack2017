@@ -11,6 +11,8 @@ var requestNumber = 1;
 
 var finalData;
 
+var isFood = false;
+
 var spinner;
 
 var venues = undefined;
@@ -19,8 +21,8 @@ var locationReports = undefined;
 
 $(document).ready(() => {
     $("#map").height(window.innerHeight);
-    $("#search-area").height(window.innerHeight);
-    $("#search-area").hide();
+    $("#search-area").height(window.innerHeight).hide();
+    $("#details-area").height(window.innerHeight).hide();
 
     $("#search-box").prop("disabled", true);
     $("#map").addClass("loading");
@@ -68,26 +70,32 @@ $(document).ready(() => {
 
     $("#quick-food").click(() => {
         $("#search-box").val("Food").triggerHandler("paste");
+        isFood = true;
     });
 
     $("#quick-gas").click(() => {
         $("#search-box").val("Gas Station").triggerHandler("paste");
+        isFood = false;
     });
 
     $("#quick-coffee").click(() => {
         $("#search-box").val("Coffee").triggerHandler("paste");
+        isFood = false;
     });
 
     $("#quick-grocery").click(() => {
         $("#search-box").val("Grocery").triggerHandler("paste");
+        isFood = false;
     });
 
     $("#quick-hospital").click(() => {
         $("#search-box").val("Hospital").triggerHandler("paste");
+        isFood = false;
     });
 
     $("#quick-lodging").click(() => {
         $("#search-box").val("Lodging").triggerHandler("paste");
+        isFood = false;
     });
 
     $("#search-box").on("input propertychange paste", () => {
@@ -149,6 +157,26 @@ $(document).ready(() => {
         }
     });
 
+    $("#reportButton").click(() => {
+        setTimeout(() => {
+            var el = document.querySelector('#el');
+
+            var currentRating = 0;
+
+            var maxRating = 5;
+
+            var callback = function(rating) {};
+
+            var myRating = rating(el, currentRating, maxRating, callback);
+        }, 250);
+    });
+
+    $("#modal-submit").click(() => {
+        // Send data
+
+        // Reset modal
+    });
+
     $("#back-button").click(() => {
         if(search) {
             search = false;
@@ -164,7 +192,11 @@ $(document).ready(() => {
 
             $("#search-box").val("");
         }
-    })
+    });
+
+    $("#back-button-2").click(() => {
+        $("#details-area").hide("slide", {direction: "right"}, 400);
+    });
 });
 
 function showLocation(location) {
@@ -199,6 +231,7 @@ function createLocateButton() {
             container.style.width = "40px";
             container.style.height = "40px";
             container.style.marginBottom = "20px";
+            container.style.zIndex = "25000";
 
             // TODO Make locate & zoom buttons rounded
 
@@ -208,6 +241,7 @@ function createLocateButton() {
             container.style.backgroundPosition = "center center";
 
             container.onclick = function() {
+                console.log("click");
                 zoomed = true;
 
                 programmaticMove = true;
@@ -262,7 +296,7 @@ function updateSearchResults() {
 
     var htmlArray = _.map(finalData, (venue) => {
         return `
-            <div class="card" style="margin-top: 10px">
+            <div class="card" style="margin-top: 10px; cursor: pointer; background-color: ${safeAvg(venue.venueSafetyAverage, venue.nearbySafetyAverage) > 7 ? "#CBFDCB" : (safeAvg(venue.venueSafetyAverage, venue.nearbySafetyAverage) < 4 ? "#FFCBCB" : "white")}" onclick="viewMoreInfo('${venue.id}')">
                 <div class="card-block">
                     <h4 class="card-title">${venue.name} <span class="pull-right text-info" style="text-align: center; line-height: 0.8;">${(venue.location.distance * 0.000621371).toFixed(1)}<br><span style="font-size: 12px;">miles away</span></span></h4>
                     <p class="card-text" style="font-size: 15px;">
@@ -279,7 +313,49 @@ function updateSearchResults() {
 }
 
 
-function viewMoreInfo() {
+function viewMoreInfo(id) {
+    isFood = $("#search-box").val() === "Food";
+    console.log(id);
+    // Blank pixel
+    $("#details-image").prop("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=");
+    $("#details-image").css("display", "none");
+
+    $.get(`https://api.foursquare.com/v2/venues/${id}/photos?v=20170101&client_id=YU22IYZ050HHUIRKJGEXT4ENBWUJTS5D524T2IBKGSJMBFPB&client_secret=ZPBQXS4OKS5J1VNEZC0HUXEPTLQ0OS5U0PPCLSSNGKLEIBE1`, (body) => {
+        console.log(body);
+        if(body) {
+            let data = body;
+            if(data) {
+                let items = data.response.photos.items;
+                if(items.length > 0) {
+                    let url = items[0].prefix + "900" + items[0].suffix;
+                    $("#details-image").prop("src", url);
+                    $("#details-image").css("display", "block");
+                }
+            }
+        }
+    });
+
+    let venue = _.findWhere(finalData, {id});
+    $("#details-name").html(venue.name);
+    $("#details-distance").html((venue.location.distance * 0.000621371).toFixed(1));
+    $("#details-address").html(venue.location.formattedAddress.join(", "));
+    $("#safetyStars").html(getFA(safeAvg(venue.venueSafetyAverage, venue.nearbySafetyAverage)));
+    $("#cleanlinessStars").html(getFA(venue.venueCleanlinessAverage));
+    if(!isFood) $("#button-button").hide();
+    else $("#button-button").show();
+
+    if(venue.venueComments.concat(venue.nearbyComments).length > 0) {
+        $("#comments-list").html(("<li class=\"list-group-item\"><h4>Comments: </h4></li>" + (_.map(_.reject(venue.venueComments.concat(venue.nearbyComments), (text) => !text || text.length < 3), comment => `<li class=\"list-group-item\">${comment}</li>`)).join("") || "<li class=\"list-group-item\">No comments found</li>"));
+    } else {
+        $("#comments-list").html(("<li class=\"list-group-item\"><h4>Comments: </h4></li>" + "<li class=\"list-group-item\">No comments found</li>"));
+    }
+    $("#getDirectionsBtn").prop("href", "https://www.google.com/maps/dir/?api=1&destination="+venue.location.formattedAddress.join(", "));
+
+
+    console.log(venue);
+
+    $("#details-main").css("marginTop", 75);
+    $("#details-area").show("slide", {direction: "right"}, 400);
 
 }
 
@@ -298,8 +374,8 @@ function safeAvg(v1, v2) {
 function getFA(value) {
     // 1-10
     let star = (val, val2) => {
-        if (val2 - val <= 0) return "<i class=\"fa fa-star\" style='color: greenyellow; padding-right: 1px;'></i>";
-        if (val2 - val == 1) return "<i class=\"fa fa-star-half-o\" style='padding-right: 1px;'></i>";
+        if (val2 - val <= 0) return "<i class=\"fa fa-star\" style='color: #D29119; padding-right: 1px;'></i>";
+        if (val2 - val == 1) return "<i class=\"fa fa-star-half-o\" style='color: #D29119; padding-right: 1px;'></i>";
         if (val2 - val >= 2) return "<i class=\"fa fa-star-o\" style='padding-right: 1px;'></i>";
     };
 
