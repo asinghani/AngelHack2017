@@ -1,0 +1,41 @@
+{
+  "name": "Venue",
+  "plural": "venues",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "contact": {
+      "type": "object"
+    },
+    "categories": {
+      "type": "array"
+    },
+    "location": {
+      "type": "object"
+    },
+    "hours": {
+      "type": "string"
+    },
+    "menu": {
+      "type": "string"
+    },
+    "photos": {
+      "type": "any"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

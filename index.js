@@ -52,6 +52,14 @@ $(document).ready(() => {
         }
     });
 
+
+    $("#quick-food").click($("#search-box").val.bind($("#search-box"), "Food"));
+    $("#quick-gas").click($("#search-box").val.bind($("#search-box"), "Gasoline"));
+    $("#quick-coffee").click($("#search-box").val.bind($("#search-box"), "Coffee"));
+    $("#quick-grocery").click($("#search-box").val.bind($("#search-box"), "Grocery"));
+    $("#quick-hospital").click($("#search-box").val.bind($("#search-box"), "Hospital"));
+    $("#quick-lodging").click($("#search-box").val.bind($("#search-box"), "Lodging"));
+
     $("#search-box").focus(() => {
         if(!search) {
             search = true;
@@ -59,6 +67,19 @@ $(document).ready(() => {
             $("#search-box").animate({width: "74%"}, 400);
             $("#search-area").show("blind", {direction: "down"}, 400);
             $("#search-div").css("background-color", "#F6F6F6");
+
+            let startTime = 300;
+            let seperationTime = 50;
+            setTimeout(() => $("#quick-food").css("visibility", "visible").animateCss("bounceIn"), startTime + 0);
+            setTimeout(() => $("#quick-gas").css("visibility", "visible").animateCss("bounceIn"), startTime + 1 * seperationTime);
+            setTimeout(() => $("#quick-coffee").css("visibility", "visible").animateCss("bounceIn"), startTime + 2 * seperationTime);
+            setTimeout(() => $("#quick-grocery").css("visibility", "visible").animateCss("bounceIn"), startTime + 3 * seperationTime);
+            setTimeout(() => $("#quick-hospital").css("visibility", "visible").animateCss("bounceIn"), startTime + 4 * seperationTime);
+            setTimeout(() => $("#quick-lodging").css("visibility", "visible").animateCss("bounceIn"), startTime + 5 * seperationTime);
+
+            // Incase functions are out of order
+            setTimeout(() => $(".quick-icon").css("visibility", "visible"), startTime + 600);
+            setTimeout(() => $(".quick-icon").css("visibility", "visible"), startTime + 700);
         }
     });
 
@@ -71,6 +92,10 @@ $(document).ready(() => {
             $("#search-box").animate({width: "90%"}, 400);
             $("#search-area").hide("blind", {direction: "down"}, 400);
             $("#search-div").css("background-color", "transparent");
+
+            setTimeout(() => $(".quick-icon").css("visibility", "hidden"), 1000)
+
+            $("#search-box").val("");
         }
     })
 });
@@ -131,7 +156,7 @@ function setupAnimateCSS() {
     $.fn.extend({
         animateCss: function (animationName) {
             var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-            this.addClass('animated ' + animationName).one(animationEnd, function() {
+            this.addClass('animated ' + animationName).on(animationEnd, function() {
                 $(this).removeClass('animated ' + animationName);
             });
             return this;
