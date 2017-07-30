@@ -24,6 +24,7 @@ module.exports = function(Venue) {
   Venue.remoteMethod("search", {
     accepts: [{arg: "searchstring", type: "string"}, {arg: "lat", type: "number"}, {arg: "long", type: "number"}],
     returns: {arg: "venues", type: "array"},
-    description: "Search for nearby venues based on location and searchString"
+    description: "Search for nearby venues based on location and searchString",
+    notes: "Search for nearby venues based on location and searchString"
   });
 };
