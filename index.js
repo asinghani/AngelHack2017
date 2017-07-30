@@ -27,6 +27,8 @@ var locationReports = undefined;
 
 var liveData = [];
 
+var spinning = false;
+
 $(document).ready(() => {
     $("#map").height(window.innerHeight);
     $("#search-area").height(window.innerHeight).hide();
@@ -237,7 +239,13 @@ function showLocation(location) {
     console.log(location.coords);
     let coords = [location.coords.latitude, location.coords.longitude];
     if(!userMarker) {
-        userMarker = L.marker(coords).addTo(map);
+        userMarker = L.layerGroup([L.circleMarker(coords, {fillOpacity: 1.0, radius: 5}), L.circleMarker(coords, {fillOpacity: 0.2, radius: 45, opacity: 0})]).addTo(map);
+        // TODO FIX THE SSL
+        // TODO ADD PUBSUB
+        // TODO ADD PUSH
+        // TODO Loopback
+        // TODO FIX FIX THE LOADING SPINNER
+
         programmaticMove = true;
         map.setZoom(16);
         map.panTo(coords);
@@ -428,7 +436,7 @@ function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
         Math.sin(dLon/2) * Math.sin(dLon/2)
     ;
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
     var d = R * c; // Distance in km
     return d;
 }
@@ -438,6 +446,8 @@ function deg2rad(deg) {
 }
 
 function startSpinner() {
+    if(spinning) return;
+    spinning = true;
     var options = {
         lines: 13 // The number of lines to draw
         , length: 28 // The length of each line
@@ -462,10 +472,14 @@ function startSpinner() {
     };
     var target = document.getElementsByTagName("body")[0];
     spinner = new Spinner(options).spin(target);
+
+    setTimeout(stopSpinner, 5000); // Stop the spinner if it gets stuck more than 5 seconds
 }
 
 function stopSpinner() {
     if(spinner) spinner.stop();
+    spinner = undefined;
+    spinning = false;
 }
 
 function gotData(data) {
