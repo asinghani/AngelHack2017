@@ -1,0 +1,30 @@
+{
+  "name": "LocationReport",
+  "plural": "LocationReports",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "locationId": {
+      "type": "string",
+      "required": true
+    },
+    "generalSafety": {
+      "type": "number",
+      "required": true
+    },
+    "cleanliness": {
+      "type": "number",
+      "required": true
+    },
+    "comment": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

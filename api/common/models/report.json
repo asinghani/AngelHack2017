@@ -1,0 +1,34 @@
+{
+  "name": "Report",
+  "plural": "Reports",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "lat": {
+      "type": "number",
+      "required": true
+    },
+    "long": {
+      "type": "number",
+      "required": true
+    },
+    "generalSafety": {
+      "type": "number",
+      "required": true
+    },
+    "cleanliness": {
+      "type": "number",
+      "required": true
+    },
+    "comments": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

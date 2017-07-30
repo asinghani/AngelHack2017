@@ -1,0 +1,17 @@
+/* TEAM */
+	Anish Singhani
+	Contact: contact [at] anishsinghani.com
+	From: California
+
+/* THANKS */
+  AngelHack Hackathon Organizers
+
+	Thanks for the help with the LoopBack SDK: Sai Vennam
+
+
+/* SITE */
+	Last update: 7/30/2017
+	Language: English
+	Doctype: HTML5
+	IDE: WebStorm
+	API Platform: IBM LoopBack

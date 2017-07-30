@@ -20,5 +20,13 @@
   "AutoCompletion": {
     "dataSource": null,
     "public": true
+  },
+  "Report": {
+    "dataSource": "SafetyDataArchive",
+    "public": true
+  },
+  "LocationReport": {
+    "dataSource": "SafetyDataArchive",
+    "public": true
   }
 }

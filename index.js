@@ -7,6 +7,13 @@ var programmaticMove = false;
 
 var search = false;
 
+var requestNumber = 1;
+
+
+var venues = undefined;
+var reports = undefined;
+var locationReports = undefined;
+
 $(document).ready(() => {
     $("#map").height(window.innerHeight);
     $("#search-area").height(window.innerHeight);
@@ -54,11 +61,45 @@ $(document).ready(() => {
 
 
     $("#quick-food").click($("#search-box").val.bind($("#search-box"), "Food"));
-    $("#quick-gas").click($("#search-box").val.bind($("#search-box"), "Gasoline"));
+    $("#quick-gas").click($("#search-box").val.bind($("#search-box"), "Gas Station"));
     $("#quick-coffee").click($("#search-box").val.bind($("#search-box"), "Coffee"));
     $("#quick-grocery").click($("#search-box").val.bind($("#search-box"), "Grocery"));
     $("#quick-hospital").click($("#search-box").val.bind($("#search-box"), "Hospital"));
     $("#quick-lodging").click($("#search-box").val.bind($("#search-box"), "Lodging"));
+
+    $(".quick-icon").click(setTimeout.bind(undefined, () => {
+        $("#search-box").triggerHandler("paste");
+    }, 500));
+
+    $("#search-box").on("input propertychange paste", () => {
+        let search = $("#search-box").val();
+        console.log(search);
+        requestNumber++;
+        venues = undefined;
+        reports = undefined;
+        locationReports = undefined;
+
+        $.post("/api/venues/search", {lat: userMarker.getLatLng().lat, long: userMarker.getLatLng().lng, searchstring: search}, ((reqNumber, body) => {
+            if(reqNumber === requestNumber) { // Check if latest request
+                venues = body;
+                if(venues && reports && locationReports) updateSearchResults();
+            }
+        }).bind(undefined, requestNumber));
+
+        $.get("/api/Reports", ((reqNumber, body) => {
+            if(reqNumber === requestNumber) { // Check if latest request
+                reports = body;
+                if(venues && reports && locationReports) updateSearchResults();
+            }
+        }).bind(undefined, requestNumber));
+
+        $.get("/api/LocationReports", ((reqNumber, body) => {
+            if(reqNumber === requestNumber) { // Check if latest request
+                locationReports = body;
+                if(venues && reports && locationReports) updateSearchResults();
+            }
+        }).bind(undefined, requestNumber));
+    });
 
     $("#search-box").focus(() => {
         if(!search) {
@@ -164,6 +205,11 @@ function setupAnimateCSS() {
     });
 }
 
+function updateSearchResults() {
+    console.log(venues);
+    console.log(reports);
+    console.log(locationReports);
+}
 
 
 

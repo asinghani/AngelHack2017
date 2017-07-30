@@ -24,10 +24,13 @@
       }
     },
     "helmet#hidePoweredBy": {},
-    "helmet#ieNoOpen": {},
     "helmet#noSniff": {},
-    "helmet#noCache": {
-      "enabled": false
+    "express-rate-limit": {
+      "params": {
+        "windowMs": 900000,
+        "max": 10000,
+        "delayMs": 0
+      }
     }
   },
   "session": {},

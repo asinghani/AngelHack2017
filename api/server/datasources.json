@@ -1,1 +1,22 @@
-{}
+{
+  "SafetyDatabase": {
+    "host": "",
+    "port": 0,
+    "url": "mongodb://username:password@ds127173.mlab.com:27173/safetydata",
+    "database": "",
+    "password": "",
+    "name": "SafetyDatabase",
+    "user": "",
+    "connector": "mongodb"
+  },
+  "SafetyDataArchive": {
+    "host": "",
+    "port": 0,
+    "url": "mongodb://username:password@ds034807.mlab.com:34807/safetydataarchive",
+    "database": "",
+    "password": "",
+    "name": "SafetyDataArchive",
+    "user": "",
+    "connector": "mongodb"
+  }
+}
