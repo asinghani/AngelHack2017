@@ -10,6 +10,7 @@ var search = false;
 var requestNumber = 1;
 
 var finalData;
+var finalId;
 
 var isFood = false;
 
@@ -159,22 +160,27 @@ $(document).ready(() => {
 
     $("#reportButton").click(() => {
         setTimeout(() => {
-            var el = document.querySelector('#el');
+            $("#rating1").rateYo({
+                halfStar: true
+            });
 
-            var currentRating = 0;
+            $("#rating2").rateYo({
+                halfStar: true
+            });
 
-            var maxRating = 5;
-
-            var callback = function(rating) {};
-
-            var myRating = rating(el, currentRating, maxRating, callback);
+            $("#commentsTextArea").val("");
         }, 250);
     });
 
     $("#modal-submit").click(() => {
-        // Send data
+        let rating1 = parseFloat($("#rating1").rateYo("rating")) * 2;
+        let rating2 = parseFloat($("#rating2").rateYo("rating")) * 2;
+        let comments = $("#commentsTextArea").val();
 
-        // Reset modal
+        $.post("/api/LocationReports", {locationId: finalId, generalSafety: rating1, cleanliness: rating2, comment: comments});
+
+        $("#commentsTextArea").val("");
+        $("#reportModal").modal("hide");
     });
 
     $("#back-button").click(() => {
@@ -314,6 +320,7 @@ function updateSearchResults() {
 
 
 function viewMoreInfo(id) {
+    finalId = id;
     isFood = $("#search-box").val() === "Food";
     console.log(id);
     // Blank pixel
