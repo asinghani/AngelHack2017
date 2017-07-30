@@ -18,5 +18,12 @@
     "name": "SafetyDataArchive",
     "user": "",
     "connector": "mongodb"
+  },
+  "push": {
+    "name": "push",
+    "connector": "loopback-component-push",
+    "installation": "installation",
+    "notification": "notification",
+    "application": "application"
   }
 }

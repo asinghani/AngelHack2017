@@ -240,11 +240,9 @@ function showLocation(location) {
     let coords = [location.coords.latitude, location.coords.longitude];
     if(!userMarker) {
         userMarker = L.layerGroup([L.circleMarker(coords, {fillOpacity: 1.0, radius: 5}), L.circleMarker(coords, {fillOpacity: 0.2, radius: 45, opacity: 0})]).addTo(map);
-        // TODO FIX THE SSL
+
         // TODO ADD PUBSUB
-        // TODO ADD PUSH
         // TODO Loopback
-        // TODO FIX FIX THE LOADING SPINNER
 
         programmaticMove = true;
         map.setZoom(16);
@@ -314,6 +312,12 @@ function updateSearchResults() {
     console.log(venues);
     console.log(reports);
     console.log(locationReports);
+
+    // OFFLINE SYNC / CACHING
+    localStorage.setItem("venues", JSON.stringify(venues));
+    localStorage.setItem("reports", JSON.stringify(reports));
+    localStorage.setItem("locationReports", JSON.stringify(locationReports));
+
 
     venues = _.map(venues, (venue) => {
         if(venue.name.indexOf("a great place") > -1) venue.name = venue.name.split("-")[0];
