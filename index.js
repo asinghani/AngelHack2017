@@ -1,3 +1,8 @@
+
+// Satori near line 190
+
+
+
 var userMarker;
 var map;
 
@@ -177,7 +182,28 @@ $(document).ready(() => {
         let rating2 = parseFloat($("#rating2").rateYo("rating")) * 2;
         let comments = $("#commentsTextArea").val();
 
+
+        /**
+         *
+         * FOR ARCHIVING
+         *
+         */
         $.post("/api/LocationReports", {locationId: finalId, generalSafety: rating1, cleanliness: rating2, comment: comments});
+
+        // Satori API used here
+        /**
+         *
+         * FOR REAL-TIME ACCESS FROM OTHER CLIENTS
+         *
+         */
+        client.publish("reports", {locationId: finalId, generalSafety: rating1, cleanliness: rating2, comment: comments} , function (pdu) {
+            if (pdu.action === 'rtm/publish/ok') {
+                console.log('Publish confirmed');
+            } else {
+                console.log('Failed to publish. RTM replied with the error  ' +
+                    pdu.body.error + ': ' + pdu.body.reason);
+            }
+        });
 
         $("#commentsTextArea").val("");
         $("#reportModal").modal("hide");

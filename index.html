@@ -50,14 +50,6 @@
 
             client.on('enter-connected', function () {
                 console.log('Connected to Satori RTM!');
-                client.publish("reports", {it: "works"} , function (pdu) {
-                    if (pdu.action === 'rtm/publish/ok') {
-                        console.log('Publish confirmed');
-                    } else {
-                        console.log('Failed to publish. RTM replied with the error  ' +
-                            pdu.body.error + ': ' + pdu.body.reason);
-                    }
-                });
             });
 
             client.on('error', function (error) {
