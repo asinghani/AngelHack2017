@@ -9,7 +9,7 @@ proxy.register("find-safe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
-            production: false,
+            production: true,
             port: 3968
         }
     }
@@ -19,7 +19,7 @@ proxy.register("www.find-safe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
-            production: false,
+            production: true,
             port: 3969
         }
     }
@@ -29,7 +29,7 @@ proxy.register("gotosafe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
-            production: false,
+            production: true,
             port: 3970
         }
     }
@@ -39,7 +39,7 @@ proxy.register("www.gotosafe.space", "http://localhost:3000", {
     ssl: {
         letsencrypt: {
             email: "anish.singhani@gmail.com",
-            production: false,
+            production: true,
             port: 3971
         }
     }
