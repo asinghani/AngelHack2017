@@ -3,6 +3,17 @@ var request = require("request");
 var _ = require("underscore");
 
 module.exports = function(Venue) {
+
+
+  Venue.validatesLengthOf('id', {min: 3});
+
+  Venue.validatesLengthOf('name', {min: 2});
+
+  Venue.validatesLengthOf('hours', {min: 2});
+
+  Venue.validatesLengthOf('menu', {min: 2});
+
+
   Venue.search = function(searchstring, lat, long, cb) {
     console.log(searchstring);
     console.log(`https://api.foursquare.com/v2/venues/explore?v=20170101&client_id=YU22IYZ050HHUIRKJGEXT4ENBWUJTS5D524T2IBKGSJMBFPB&client_secret=ZPBQXS4OKS5J1VNEZC0HUXEPTLQ0OS5U0PPCLSSNGKLEIBE1&ll=${lat},${long}&query=${encodeURIComponent(searchstring)}`);
