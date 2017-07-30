@@ -19,6 +19,9 @@ $(document).ready(() => {
     $("#search-area").height(window.innerHeight);
     $("#search-area").hide();
 
+    $("#search-box").prop("disabled", true);
+    $("#map").addClass("loading");
+
     $("#quickSearch").css("marginTop", $("#search-div").height() + 15 + 25); // 15 + 25 = paddingBottom + paddingTop of search-div
 
     map = L.map("map", {
@@ -134,7 +137,7 @@ $(document).ready(() => {
             $("#search-area").hide("blind", {direction: "down"}, 400);
             $("#search-div").css("background-color", "transparent");
 
-            setTimeout(() => $(".quick-icon").css("visibility", "hidden"), 1000)
+            setTimeout(() => $(".quick-icon").css("visibility", "hidden"), 1000);
 
             $("#search-box").val("");
         }
@@ -151,6 +154,9 @@ function showLocation(location) {
         map.panTo(coords);
         programmaticMove = false;
         zoomed = true;
+
+        $("#search-box").prop("disabled", false);
+        $("#map").removeClass("loading");
     } else {
         userMarker.setLatLng(coords);
         if(zoomed) {
@@ -209,10 +215,31 @@ function updateSearchResults() {
     console.log(venues);
     console.log(reports);
     console.log(locationReports);
+
+    venues = _.map(venues, (venue) => {
+        let venueReports = _.findWhere(locationReports, {locationId: venue.id});
+        let venueComments = _.pluck(venueReports, "comment");
+        let venueSafetyAverage = Math.round(_.reduce(_.pluck(venueReports, "generalSafety"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
+        let venueCleanlinessAverage = Math.round(_.reduce(_.pluck(venueReports, "cleanliness"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
+
+        let nearbyReports = _.filter(reports, (report) => {
+            return Math.abs(report.lat - venue.lat) > ;
+        })
+    });
 }
 
 
-
+function distance(lat1, lon1, lat2, lon2,) {
+    var radlat1 = Math.PI * lat1/180;
+    var radlat2 = Math.PI * lat2/180;
+    var theta = lon1-lon2;
+    var radtheta = Math.PI * theta/180;
+    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    dist = Math.acos(dist);
+    dist = dist * 180/Math.PI;
+    dist = dist * 60 * 1.1515;
+    return dist;
+}
 
 
 

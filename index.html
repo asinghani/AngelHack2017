@@ -26,6 +26,7 @@
                 integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
                 crossorigin=""></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <script src="underscore-min.js"></script>
 
         <script src="index.js"></script>
 
@@ -92,7 +93,9 @@
                         <div style="width: 100%; text-align: center;"><br>Enter a search query to see search results here...</div>
                     </div>
                 </div>
-                <div id="map" style="width:100%; z-index: 0; position: absolute;"></div>
+                <div id="map" style="width:100%; z-index: 0; position: absolute;">
+                    <div style="position: fixed; left:0; right:0; top:0; bottom:0; z-index: 10000;"></div>
+                </div>
             </div>
         </div>
     </body>

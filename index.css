@@ -92,10 +92,6 @@
     visibility: hidden;
 }
 
-.loadinggif
-{
-    background:
-            url('http://www.hsi.com.hk/HSI-Net/pages/images/en/share/ajax-loader.gif')
-            no-repeat
-            right center;
+.loading > div {
+    background: url("Magnify.gif") no-repeat center center;
 }
