@@ -15,7 +15,7 @@ module.exports = function(Venue) {
         data = JSON.parse(body).response.groups[0].items;
         data = _.pluck(data, "venue");
         data = _.sortBy(data, venue => venue.location.distance); // Distance sorting
-        console.log(data);
+        //console.log(data);
         cb(null, data);
       }
     });

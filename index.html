@@ -27,12 +27,13 @@
                 crossorigin=""></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <script src="underscore-min.js"></script>
+        <script type="text/javascript" src="spin.min.js"></script>
 
         <script src="index.js"></script>
 
 
     </head>
-    <body>
+    <body style="overflow-y: hidden;">
         <div class="container" id="container">
             <div class="row">
                 <div id="search-div" style="position: absolute; top:0; padding-top: 25px; padding-bottom: 15px; background-color: transparent; right: 0; left: 0; z-index: 101;">
@@ -47,7 +48,7 @@
                             <button class="btn btn-primary btn-lg btn-circle noshadow" id="back-button" type="button" style="max-width: 15%; margin-right: 2%; padding: 0; left: -15%; position: fixed; z-index: 101; background-color: #E4E4E4;">
                                 <i class="fa fa-angle-left fa-2x text-center" style="vertical-align: middle; color: darkgrey;"></i>
                             </button>
-                            <input id="search-box" type="text" class="form-control form-control-lg round" placeholder="Search..." style="background-color: #E4E4E4; float: right; width: 90%; position: fixed; right: 5%; z-index: 101;">
+                            <input id="search-box" type="text" class="form-control form-control-lg round" placeholder="Search..." style="background-color: #E9E9E9; float: right; width: 90%; position: fixed; right: 5%; z-index: 101;">
                             <input type="text" class="form-control form-control-lg" placeholder="" style="width: 1px; visibility: hidden;">
                         </div>
                     </div>
@@ -89,7 +90,7 @@
 
                         </div>
                     </div>
-                    <div id="results">
+                    <div id="results" style="overflow-y: scroll; padding-bottom: 20px;">
                         <div style="width: 100%; text-align: center;"><br>Enter a search query to see search results here...</div>
                     </div>
                 </div>

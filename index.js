@@ -9,6 +9,9 @@ var search = false;
 
 var requestNumber = 1;
 
+var finalData;
+
+var spinner;
 
 var venues = undefined;
 var reports = undefined;
@@ -76,6 +79,7 @@ $(document).ready(() => {
 
     $("#search-box").on("input propertychange paste", () => {
         let search = $("#search-box").val();
+        startSpinner();
         console.log(search);
         requestNumber++;
         venues = undefined;
@@ -84,7 +88,7 @@ $(document).ready(() => {
 
         $.post("/api/venues/search", {lat: userMarker.getLatLng().lat, long: userMarker.getLatLng().lng, searchstring: search}, ((reqNumber, body) => {
             if(reqNumber === requestNumber) { // Check if latest request
-                venues = body;
+                venues = body.venues;
                 if(venues && reports && locationReports) updateSearchResults();
             }
         }).bind(undefined, requestNumber));
@@ -124,6 +128,10 @@ $(document).ready(() => {
             // Incase functions are out of order
             setTimeout(() => $(".quick-icon").css("visibility", "visible"), startTime + 600);
             setTimeout(() => $(".quick-icon").css("visibility", "visible"), startTime + 700);
+
+            setTimeout(() => {
+                $("#results").css("height", $("#search-area").height() - $("#quickSearch").height() - 91);
+            }, 1500);
         }
     });
 
@@ -216,38 +224,86 @@ function updateSearchResults() {
     console.log(reports);
     console.log(locationReports);
 
-    venues = venues.map((v) => {
-        console.log("Venue: " + v);
-        let venueReports = _.findWhere(locationReports, {locationId: v.id}) || [];
-        let venueComments = _.pluck(venueReports, "comment") || [];
-        let venueSafetyAverage = Math.round(_.reduce(_.pluck(venueReports, "generalSafety"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
-        let venueCleanlinessAverage = Math.round(_.reduce(_.pluck(venueReports, "cleanliness"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
+    venues = _.map(venues, (venue) => {
+        if(venue.name.indexOf("a great place") > -1) venue.name = venue.name.split("-")[0];
+        let venueReports = _.filter(locationReports, report => report.locationId === venue.id) || [];
+        venue.venueComments = _.pluck(venueReports, "comment") || [];
+        venue.venueSafetyAverage = Math.round(_.reduce(_.pluck(venueReports, "generalSafety"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
+        venue.venueCleanlinessAverage = Math.round(_.reduce(_.pluck(venueReports, "cleanliness"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
 
         let nearbyReports = _.filter(reports, (report) => {
-            return distance(report.lat, v.location.lat, report.long, v.location.lng) < 0.5; // Closer than 0.5 M = close enough
+            return getDistanceFromLatLonInKm(report.lat, report.long, venue.location.lat, venue.location.lng) < 1; // Closer than 1km = close enough
         });
-        console.log(nearbyReports);
+        venue.nearbyComments = _.pluck(nearbyReports, "comments") || [];
+        venue.nearbySafetyAverage = Math.round(_.reduce(_.pluck(nearbyReports, "generalSafety"), function(memo, num){ return memo + num; }, 0) / nearbyReports.length);
+        venue.nearbyCleanlinessAverage = Math.round(_.reduce(_.pluck(nearbyReports, "cleanliness"), function(memo, num){ return memo + num; }, 0) / nearbyReports.length);
+
+        return venue;
     });
+
+    finalData = venues;
+
+    var htmlArray = _.map(finalData, (venue) => {
+        return `
+            <div class="card" style="margin-top: 10px">
+                <div class="card-block">
+                    <h4 class="card-title">${venue.name}</h4>
+                    <p class="card-text">${venue.location.formattedAddress[0] + "<br>" + venue.location.formattedAddress[1]}</p>
+                </div>
+            </div>
+        `;
+    });
+
+    stopSpinner();
+    $("#results").html("<div style='width: 90%; margin: 0 auto;'>"+htmlArray.join("")+"</div>");
 }
 
 
-function distance(lat1, lon1, lat2, lon2,) {
-    var radlat1 = Math.PI * lat1/180;
-    var radlat2 = Math.PI * lat2/180;
-    var theta = lon1-lon2;
-    var radtheta = Math.PI * theta/180;
-    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    dist = Math.acos(dist);
-    dist = dist * 180/Math.PI;
-    dist = dist * 60 * 1.1515;
-    return dist;
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1);
+    var a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2)
+    ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c; // Distance in km
+    return d;
 }
 
+function deg2rad(deg) {
+    return deg * (Math.PI/180)
+}
 
+function startSpinner() {
+    var options = {
+        lines: 13 // The number of lines to draw
+        , length: 28 // The length of each line
+        , width: 14 // The line thickness
+        , radius: 42 // The radius of the inner circle
+        , scale: 1 // Scales overall size of the spinner
+        , corners: 1 // Corner roundness (0..1)
+        , color: '#000' // #rgb or #rrggbb or array of colors
+        , opacity: 0.25 // Opacity of the lines
+        , rotate: 0 // The rotation offset
+        , direction: 1 // 1: clockwise, -1: counterclockwise
+        , speed: 0.6 // Rounds per second
+        , trail: 35 // Afterglow percentage
+        , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+        , zIndex: 2e9 // The z-index (defaults to 2000000000)
+        , className: 'spinner' // The CSS class to assign to the spinner
+        , top: '50%' // Top position relative to parent
+        , left: '50%' // Left position relative to parent
+        , shadow: false // Whether to render a shadow
+        , hwaccel: false // Whether to use hardware acceleration
+        , position: 'absolute' // Element positioning
+    };
+    var target = document.getElementsByTagName("body")[0];
+    spinner = new Spinner(options).spin(target);
+}
 
-
-
-
-
-
-
+function stopSpinner() {
+    if(spinner) spinner.stop();
+}
