@@ -1,4 +1,4 @@
-var proxy = require("redbird")({port: 80});
+var proxy = require("redbird")({ssl: {port: 443}});
 
 proxy.register("find-safe.space", "http://localhost:3000", {
     ssl: {
