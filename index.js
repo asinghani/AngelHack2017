@@ -30,6 +30,8 @@ var liveData = [];
 
 var spinning = false;
 
+var mainCoords;
+
 $(document).ready(() => {
     $("#map").height(window.innerHeight);
     $("#search-area").height(window.innerHeight).hide();
@@ -119,7 +121,7 @@ $(document).ready(() => {
         reports = undefined;
         locationReports = undefined;
 
-        $.post("/api/venues/search", {lat: userMarker.getLatLng().lat, long: userMarker.getLatLng().lng, searchstring: search}, ((reqNumber, body) => {
+        $.post("/api/venues/search", {lat: mainCoords.lat, long: mainCoords.lng, searchstring: search}, ((reqNumber, body) => {
             if(reqNumber === requestNumber) { // Check if latest request
                 venues = body.venues;
                 if(venues && reports && locationReports) updateSearchResults();
@@ -242,6 +244,7 @@ function showLocation(location) {
     if(!userMarker) {
         userMarker = L.circleMarker(coords, {fillOpacity: 1.0, radius: 5}).addTo(map);
         userMarker2 = L.circleMarker(coords, {fillOpacity: 0.2, radius: 45, opacity: 0}).addTo(map);
+        mainCoords = coords;
 
         // TODO ADD PUBSUB
         // TODO Loopback
@@ -257,6 +260,8 @@ function showLocation(location) {
     } else {
         userMarker.setLatLng(coords);
         userMarker2.setLatLng(coords);
+        mainCoords = coords;
+
         if(zoomed) {
             programmaticMove = true;
             map.flyTo(coords);
@@ -288,7 +293,7 @@ function createLocateButton() {
                 zoomed = true;
 
                 programmaticMove = true;
-                map.flyTo(userMarker.getLatLng(), 16);
+                map.flyTo(mainCoords, 16);
                 programmaticMove = false;
             };
 
