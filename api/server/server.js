@@ -50,7 +50,7 @@ app.start = function() {
 boot(app, __dirname, function(err) {
   if (err) throw err;
 
-  app.use("/ui", express.static(__dirname+"/../..")); // Custom route #1
+  app.use("/ui", express.static(__dirname+"/../..")); // Custom routes
   app.use("/robots.txt", (req, res) => res.sendFile(__dirname+"/assets/robots.txt"));
   app.use("/humans.txt", (req, res) => res.sendFile(__dirname+"/assets/humans.txt"));
 

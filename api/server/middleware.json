@@ -23,8 +23,13 @@
         "includeSubdomains": true
       }
     },
+    "helmet#ieNoOpen": {},
     "helmet#hidePoweredBy": {},
     "helmet#noSniff": {},
+
+    "helmet#noCache": {
+      "enabled": false
+    },
     "express-rate-limit": {
       "params": {
         "windowMs": 900000,
