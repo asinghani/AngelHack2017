@@ -217,14 +217,16 @@ function updateSearchResults() {
     console.log(locationReports);
 
     venues = _.map(venues, (venue) => {
-        let venueReports = _.findWhere(locationReports, {locationId: venue.id});
-        let venueComments = _.pluck(venueReports, "comment");
+        console.log(venue);
+        let venueReports = _.findWhere(locationReports, {locationId: venue.id}) || [];
+        let venueComments = _.pluck(venueReports, "comment") || [];
         let venueSafetyAverage = Math.round(_.reduce(_.pluck(venueReports, "generalSafety"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
         let venueCleanlinessAverage = Math.round(_.reduce(_.pluck(venueReports, "cleanliness"), function(memo, num){ return memo + num; }, 0) / venueReports.length);
 
         let nearbyReports = _.filter(reports, (report) => {
-            return Math.abs(report.lat - venue.lat) > ;
-        })
+            return distance(report.lat, venue.location.lat, report.long, venue.location.lng) < 0.5; // Closer than 0.5 M = close enough
+        });
+        console.log(nearbyReports);
     });
 }
 
