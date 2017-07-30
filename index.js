@@ -66,19 +66,33 @@ $(document).ready(() => {
     });
 
 
-    $("#quick-food").click($("#search-box").val.bind($("#search-box"), "Food"));
-    $("#quick-gas").click($("#search-box").val.bind($("#search-box"), "Gas Station"));
-    $("#quick-coffee").click($("#search-box").val.bind($("#search-box"), "Coffee"));
-    $("#quick-grocery").click($("#search-box").val.bind($("#search-box"), "Grocery"));
-    $("#quick-hospital").click($("#search-box").val.bind($("#search-box"), "Hospital"));
-    $("#quick-lodging").click($("#search-box").val.bind($("#search-box"), "Lodging"));
+    $("#quick-food").click(() => {
+        $("#search-box").val("Food").triggerHandler("paste");
+    });
 
-    $(".quick-icon").click(setTimeout.bind(undefined, () => {
-        $("#search-box").triggerHandler("paste");
-    }, 500));
+    $("#quick-gas").click(() => {
+        $("#search-box").val("Gas Station").triggerHandler("paste");
+    });
+
+    $("#quick-coffee").click(() => {
+        $("#search-box").val("Coffee").triggerHandler("paste");
+    });
+
+    $("#quick-grocery").click(() => {
+        $("#search-box").val("Grocery").triggerHandler("paste");
+    });
+
+    $("#quick-hospital").click(() => {
+        $("#search-box").val("Hospital").triggerHandler("paste");
+    });
+
+    $("#quick-lodging").click(() => {
+        $("#search-box").val("Lodging").triggerHandler("paste");
+    });
 
     $("#search-box").on("input propertychange paste", () => {
         let search = $("#search-box").val();
+        $("#results").html("");
         startSpinner();
         console.log(search);
         requestNumber++;
@@ -138,6 +152,7 @@ $(document).ready(() => {
     $("#back-button").click(() => {
         if(search) {
             search = false;
+            $("#results").html("<div style=\"width: 100%; text-align: center;\"><br>Enter a search query to see search results here...</div>");
             $("#back-button").animate({"left": "0%"}, 100, () => {
                 $("#back-button").css("left", "-15%");
             });
@@ -241,14 +256,19 @@ function updateSearchResults() {
         return venue;
     });
 
+    venues = _.sortBy(venues, (venue) => -(safeAvg(venue.venueSafetyAverage, venue.nearbySafetyAverage) || 4));
+
     finalData = venues;
 
     var htmlArray = _.map(finalData, (venue) => {
         return `
             <div class="card" style="margin-top: 10px">
                 <div class="card-block">
-                    <h4 class="card-title">${venue.name}</h4>
-                    <p class="card-text">${venue.location.formattedAddress[0] + "<br>" + venue.location.formattedAddress[1]}</p>
+                    <h4 class="card-title">${venue.name} <span class="pull-right text-info" style="text-align: center; line-height: 0.8;">${(venue.location.distance * 0.000621371).toFixed(1)}<br><span style="font-size: 12px;">miles away</span></span></h4>
+                    <p class="card-text" style="font-size: 15px;">
+                        ${venue.location.formattedAddress[0] + "<br>" + venue.location.formattedAddress[1]}
+                        <span class="pull-right"><span style="text-align: center;">Safety:</span><br>${getFA(safeAvg(venue.venueSafetyAverage, venue.nearbySafetyAverage))}</span>
+                    </p>
                 </div>
             </div>
         `;
@@ -256,6 +276,35 @@ function updateSearchResults() {
 
     stopSpinner();
     $("#results").html("<div style='width: 90%; margin: 0 auto;'>"+htmlArray.join("")+"</div>");
+}
+
+
+function viewMoreInfo() {
+
+}
+
+
+
+
+
+
+function safeAvg(v1, v2) {
+    if(isNaN(v1) && isNaN(v2)) return NaN;
+    if(isNaN(v1)) return v2;
+    if(isNaN(v2)) return v1;
+    return v1 + v2 / 2;
+}
+
+function getFA(value) {
+    // 1-10
+    let star = (val, val2) => {
+        if (val2 - val <= 0) return "<i class=\"fa fa-star\" style='color: greenyellow; padding-right: 1px;'></i>";
+        if (val2 - val == 1) return "<i class=\"fa fa-star-half-o\" style='padding-right: 1px;'></i>";
+        if (val2 - val >= 2) return "<i class=\"fa fa-star-o\" style='padding-right: 1px;'></i>";
+    };
+
+    if(isNaN(value)) return "(Unknown)";
+    return star(value, 2) + star(value, 4) + star(value, 6) + star(value, 8) + star(value, 10);
 }
 
 
@@ -283,7 +332,7 @@ function startSpinner() {
         , length: 28 // The length of each line
         , width: 14 // The line thickness
         , radius: 42 // The radius of the inner circle
-        , scale: 1 // Scales overall size of the spinner
+        , scale: 0.4 // Scales overall size of the spinner
         , corners: 1 // Corner roundness (0..1)
         , color: '#000' // #rgb or #rrggbb or array of colors
         , opacity: 0.25 // Opacity of the lines
@@ -294,7 +343,7 @@ function startSpinner() {
         , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
         , zIndex: 2e9 // The z-index (defaults to 2000000000)
         , className: 'spinner' // The CSS class to assign to the spinner
-        , top: '50%' // Top position relative to parent
+        , top: '40%' // Top position relative to parent
         , left: '50%' // Left position relative to parent
         , shadow: false // Whether to render a shadow
         , hwaccel: false // Whether to use hardware acceleration
